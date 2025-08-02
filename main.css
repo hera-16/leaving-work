@@ -293,7 +293,7 @@ select:focus {
     display: flex;
     align-items: center;      /* 縦方向中央揃え */
     justify-content: center;  /* 横方向中央揃え */
-    height: 100%;             /* 必要に応じて高さを指定 */
+    height: 40px;
 }
 
 #loadingOverlay {
