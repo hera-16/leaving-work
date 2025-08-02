@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <title>新規ユーザー登録</title>
+    <link rel="stylesheet" href="new_register.css">
+    <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
+</head>
+<body>
+    <div class="container">
+        <h2>新規ユーザー登録</h2>
+        <form onsubmit="event.preventDefault(); registerUser();">
+            <div class="mb-3">
+                <label for="newName">ユーザー名:</label>
+                <input type="text" id="newName" placeholder="ユーザー名を入力">
+            </div>
+            <div class="mb-3">
+                <label for="newPassword">パスワード:</label>
+                <input type="password" id="newPassword" placeholder="パスワードを入力">
+            </div>
+            <button type="submit" class="btn btn-primary w-100">登録</button>
+        </form>
+        <div id="registerError" class="register-info mt-3"></div>
+        <div class="link-box">
+            <a href="admin_view.html">管理者画面へ戻る</a>
+        </div>
+    </div>
+    <script>
+        // Firebaseの設定
+        const firebaseConfig = {
+            apiKey: "AIzaSyBWu2dCPqq8jcxjMuxw4iL3ckE1PfCIF90",
+            authDomain: "leaving-work-31983.firebaseapp.com",
+            databaseURL: "https://leaving-work-31983-default-rtdb.firebaseio.com",
+            projectId: "leaving-work-31983",
+            storageBucket: "leaving-work-31983.appspot.com",
+            messagingSenderId: "262714318259",
+            appId: "1:262714318259:web:6f526f8ee38387ae6affc6",
+            measurementId: "G-YWBGTWQZQQ"
+        };
+
+        if (!firebase.apps.length) {
+            firebase.initializeApp(firebaseConfig);
+        }
+        const db = firebase.database();
+
+        // 新規ユーザー登録処理
+        function registerUser() {
+            const nameInput = document.getElementById("newName");
+            const passwordInput = document.getElementById("newPassword");
+            const registerError = document.getElementById("registerError");
+
+            const name = nameInput.value.trim();
+            const password = passwordInput.value.trim();
+
+            if (!name || !password) {
+                registerError.textContent = "氏名とパスワードを入力してください。";
+                return;
+            }
+
+            // 氏名とパスワードを保存
+            db.ref("userNames/" + name).set({ name: name }, function(error) {
+                if (error) {
+                    registerError.textContent = "氏名の登録に失敗しました。";
+                    return;
+                }
+
+                db.ref("userPasswords/" + name).set({ password: password }, function(error) {
+                    if (error) {
+                        registerError.textContent = "パスワードの登録に失敗しました。";
+                    } else {
+                        // 登録完了後、エラーメッセージのスペースに登録情報を表示
+                        registerError.innerHTML = `
+                            <span>ユーザー名: ${name}</span>
+                            <span>パスワード: ${password}</span>
+                        `;
+
+                        // 入力フィールドを消去
+                        nameInput.value = "";
+                        passwordInput.value = "";
+                    }
+                });
+            });
+        }
+    </script>
+</body>
+</html>

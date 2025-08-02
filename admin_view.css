@@ -1,0 +1,261 @@
+body {
+    font-family: Arial, sans-serif;
+    margin: 20px;
+    background-color: #f5f5f5; /* 背景色を淡いグレーに設定 */
+}
+
+.container {
+    max-width: 900px; /* コンテナの幅を調整 */
+    margin: auto;
+    background-color: #ffffff; /* コンテナの背景色を白に設定 */
+    border-radius: 10px; /* 角を丸くして柔らかい印象に */
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* コンテナに影を追加 */
+    padding: 20px; /* コンテナ内の余白を調整 */
+}
+
+h2 {
+    display: block; /* ブロック要素として扱う */
+    font-size: 2em;
+    margin-bottom: 20px; /* 下部に余白を追加 */
+    text-align: center; /* 左揃えに設定 */
+    color: #333; /* 見出しの文字色を濃いグレーに設定 */
+}
+
+.admin-menu {
+    margin-bottom: 20px;
+    text-align: left; /* 左揃えに設定 */
+}
+
+.admin-menu a {
+    color: #007bff;
+    text-decoration: underline;
+    font-size: 1em;
+}
+
+table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 0;
+    margin-bottom: 0;
+    background-color: #ffffff; /* テーブルの背景色を白に設定 */
+}
+
+th, td {
+    border: 1px solid #ccc; /* セルの枠線を淡いグレーに設定 */
+    padding: 8px;
+    text-align: center;
+    background-color: #f9f9f9; /* セルの背景色を淡いグレーに設定 */
+}
+
+th {
+    background-color: #e0e0e0; /* ヘッダーセルの背景色を少し濃いグレーに設定 */
+    font-weight: bold;
+}
+
+.login-link {
+    position: fixed;
+    right: 20px;
+    bottom: 20px;
+    color: #007bff;
+    text-decoration: underline;
+    font-size: 1em;
+    z-index: 100;
+    background-color: #f5f5f5; /* ボタンの背景色を淡いグレーに設定 */
+    padding: 10px 15px;
+    border-radius: 5px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); /* ボタンに影を追加 */
+}
+
+/* h3タグ全体に青のアンダーラインを追加 */
+h3 {
+    border-bottom: 4px solid blue;
+    padding-bottom: 5px;
+    margin-bottom: 10px;
+    font-size: 2em; /* フォントサイズを大きく設定 */
+}
+
+/* 会場ごとの行間を広げる */
+h4 {
+    margin-top: 20px; /* 会場タイトルの上部余白を追加 */
+    margin-bottom: 10px; /* 会場タイトルの下部余白を追加 */
+    line-height: 1.8; /* 行間を広げる */
+    text-decoration: underline #6b6e71 solid 3px;
+}
+
+/* ログイン画面へのリンクを右下に固定 */
+#backToLogin {
+    position: fixed;
+    bottom: 10px;
+    right: 10px;
+    color: #fff;
+    text-decoration: none;
+    font-size: 1em;
+    background-color: #333;
+    padding: 8px 12px;
+    border-radius: 5px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    z-index: 1000;
+}
+#backToLogin:hover {
+    background-color: #222; /* ホバー時の背景色を少し明るく設定 */
+    color: white; /* ホバー時の文字色を白に設定 */
+    text-decoration: underline white solid; /* ホバー時の下線を追加 */
+}
+
+/* 新規登録画面へのリンクのスタイル */
+#newRegister {
+    display: flex;
+    justify-content: flex-end;
+    margin-bottom: 20px; /* 下部に余白を追加 */
+    color: white; /* 文字色を白に設定 */
+    text-decoration: none;
+    font-size: 1em;
+    background-color: #389eb8; /* 背景色を濃いグレーに設定 */
+    padding: 8px 12px;
+    border-radius: 5px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* ボタンに影を追加 */
+    text-align: center;
+    float: right; /* 右側に配置 */
+}
+#newRegister:hover {
+    background-color: #17415a; /* ホバー時の背景色を少し濃いグレーに設定 */
+    text-decoration: underline; /* ホバー時の下線を追加 */
+}
+
+/* admin_view.html内 <style> に追記 */
+.edit-set {
+    margin-bottom: 30px;
+    border-bottom: 1px solid #555;
+    padding-bottom: 20px;
+}
+.edit-set:last-child {
+    border-bottom: none;
+    margin-bottom: 0;
+    padding-bottom: 0;
+}
+.edit-set table {
+    margin-bottom: 0 !important;
+}
+.empty-col {
+    background: transparent !important;
+    border-right: 1px solid #ccc;
+    width: 32px;
+}
+.edit-block-before {
+    background: #ffcccc !important;
+}
+.edit-block-before th,
+.edit-block-before td {
+    background: #ffcccc !important;
+}
+.arrow-icon {
+    height: 1.2em;
+    vertical-align: middle;
+    margin-right: 2px;
+}
+.label-cell {
+    width: 60px;
+    text-align: center;
+    font-weight: bold;
+    background: #f5f5f5;
+}
+.change-label {
+    margin-left: 6px;
+    font-weight: bold;
+    color: #333;
+    font-size: 1em;
+    vertical-align: middle;
+}
+.batu-icon {
+    height: 1.2em;
+    vertical-align: middle;
+    margin-right: 4px;
+}
+.no-change-label {
+    font-weight: bold;
+    color: #888;
+    font-size: 1em;
+    vertical-align: middle;
+}
+.name-col {
+    font-weight: bold;
+    text-align: center;
+    vertical-align: middle;
+    background: #f5f5f5;
+}
+.editor-col {
+    font-weight: bold;
+    text-align: center;
+    vertical-align: middle;
+    background: #f5f5f5;
+}
+/* 承諾列のヘッダーとアイコン用CSS */
+.approve-header {
+    text-align: center;
+    vertical-align: middle;
+}
+.approve-icon {
+    width: 18px;
+    height: 18px;
+    margin-left: 5px;
+    vertical-align: middle;
+}
+
+/* groupdataテーブルの4番目の列の幅を小さく設定 */
+#groupedData table tr th:nth-child(4),
+#groupedData table tr td:nth-child(5) {
+    width: 10%; /* 必要に応じて調整可能 */
+}
+
+@media print {
+    @page {
+        size: landscape; /* 横向きに設定 */
+        margin: 10mm; /* ページの余白を調整 */
+    }
+
+    body {
+        font-size: 10px; /* 全体のフォントサイズを縮小 */
+        margin: 0;
+        padding: 0;
+    }
+
+    h2 {
+        font-size: 4em; /* 管理者ページの文字を大きく表示 */
+        text-align: center;
+        margin-bottom: 20px;
+        page-break-before: always; /* すべてのページで適用 */
+    }
+
+    h3 {
+        font-size: 3em; /* 日付のフォントサイズを2倍に設定 */
+        page-break-before: always; /* 日付ごとに改ページ */
+        margin-top: 0;
+    }
+
+    table {
+        width: 100%; /* テーブルをページ幅に合わせる */
+        font-size: 9px; /* テーブル内のフォントサイズを縮小 */
+    }
+
+    th, td {
+        padding: 4px; /* セルの余白を調整 */
+    }
+
+    th:last-child, td:last-child {
+        width: 25%; /* 確認列の幅を半分に設定 */
+    }
+
+    .edit-set {
+        page-break-inside: avoid; /* セット全体が1ページに収まるようにする */
+    }
+
+    .container {
+        transform: scale(0.95); /* 内容を縮小して1ページに収める */
+        transform-origin: top left; /* 縮小の基準点を左上に設定 */
+    }
+
+    #backToLogin, /* 右下のログイン画面へのボタンを非表示 */
+    .login-link { 
+        display: none;
+    }
+}
