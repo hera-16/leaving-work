@@ -290,6 +290,10 @@ select:focus {
     text-align: center;
     font-size: 1.0em;   /* フォントサイズを調整 */
     padding: 5px;
+    display: flex;
+    align-items: center;      /* 縦方向中央揃え */
+    justify-content: center;  /* 横方向中央揃え */
+    height: 100%;             /* 必要に応じて高さを指定 */
 }
 
 #loadingOverlay {
