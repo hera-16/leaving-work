@@ -1,0 +1,432 @@
+html {
+    background: #23272b;
+    min-height: 100vh;
+    width: 100vw;
+}
+
+body {
+    font-family: 'Arial', sans-serif;
+    margin: 0;
+    padding: 0;
+    background: transparent;
+    color: #333;
+    line-height: 1.6;
+    min-height: 100vh;
+    width: 100vw;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.container {
+    width: 100vw;
+    max-width: 900px; /* 写真のような横幅 */
+    min-height: 100vh;
+    margin: 0 auto;
+    background: #fff;
+    border-radius: 10px;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.08);
+    padding: 32px 0 32px 0;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    align-items: center;
+}
+
+h2 {
+    font-size: 2em;
+    margin-bottom: 0.7em;
+    text-align: center;
+    letter-spacing: 0.03em;
+}
+
+/* 氏名・所属のラベルと入力欄を太字に */
+label[for="name"],
+label[for="department"] {
+    font-weight: bold;
+}
+
+input#name,
+input#department {
+    font-weight: bold;
+    text-align: center;
+    margin-top: 0;
+}
+
+/* 通常時の枠・背景・色（index.cssと同じ、オレンジなし） */
+input[type="text"],
+input[type="password"] {
+    display: block;
+    margin: 10px 0;
+    padding: 10px;
+    width: 100%;
+    border: 2px solid #b0bec5;
+    background: #f5f7fa;
+    border-radius: 4px;
+    box-sizing: border-box;
+    color: #333;
+    transition: border-color 0.2s, box-shadow 0.2s, background 0.2s;
+}
+
+/* 出勤・退勤時間、会場のボーダー */
+input[type="time"],
+select[name="venue"] {
+    border: 2px solid #90caf9;
+    background: #f5fbff;
+    border-radius: 4px;
+    color: #333;
+    transition: border-color 0.2s, box-shadow 0.2s, background 0.2s;
+}
+input[type="time"]:focus,
+select[name="venue"]:focus {
+    border: 2px solid #1976d2;
+    box-shadow: 0 0 0 2px #bbdefb;
+    background: #e3f2fd;
+    outline: none;
+}
+
+label[for="nichizuke"] {
+    font-weight: bold;
+}
+
+/* 日付入力のスタイル追加 */
+input[type="date"] {
+    display: block;
+    margin: 10px 0;
+    padding: 10px;
+    width: 100%;
+    border: 2px solid #b0bec5;
+    background: #f5fbff;
+    border-radius: 4px;
+    box-sizing: border-box;
+    color: #333;
+    font-weight: bold;
+    font-size: 1.5em; /* 例: 1.5emで大きく */
+    transition: border-color 0.2s, box-shadow 0.2s, background 0.2s;
+}
+input[type="date"]:focus {
+    border: 2px solid #1976d2;
+    box-shadow: 0 0 0 2px #bbdefb;
+    background: #e3f2fd;
+    outline: none;
+}
+
+/* 過去データ表示用div */
+.past-data {
+    background: #fff;
+    color: #78909c;
+    font-weight: bold;
+    font-size: 1.08em;
+    padding: 14px 18px;
+    border-radius: 8px;
+    margin: 18px 0;
+    box-shadow: 0 2px 8px rgba(120,130,140,0.08);
+    text-align: center;
+}
+
+/* ボタン */
+button {
+    background-color: #78909c;
+    color: white;
+    padding: 12px 20px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    width: 100%;
+    font-size: 1em;
+    transition: background 0.2s;
+    margin-top: 0.7em;
+    font-weight: bold;
+    letter-spacing: 0.03em;
+}
+button:hover {
+    background-color: #546e7a;
+}
+
+/* テーブル */
+#lastEntryTable {
+    margin: 24px auto 0 auto;
+    border-collapse: collapse;
+    width: 100%;
+    max-width: 480px;
+    font-size: 0.92em;
+    table-layout: fixed;
+    background: #f5f7fa;
+    border-radius: 8px;
+    overflow: hidden;
+}
+#lastEntryTable th, #lastEntryTable td {
+    border: 1px solid #d0d7e1;
+    padding: 6px 2px;
+    text-align: center;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    background: transparent;
+}
+#lastEntryTable th {
+    background: #e3e8ee;
+    font-size: 1em;
+    font-weight: bold;
+}
+#lastEntryTable tr:nth-child(even) td {
+    background: #f0f2f5;
+}
+
+/* メッセージ */
+#errorMessage {
+    color: #d32f2f;
+    margin-top: 0.5em;
+    text-align: center;
+    font-size: 0.98em;
+}
+#successMessage {
+    color: #388e3c;
+    font-size: 1.05em;
+    text-align: center;
+    margin: 12px 0;
+    font-weight: bold;
+}
+
+/* 過去のデータリンク */
+a[href="history.html"] {
+    position: fixed;
+    left: 10px;
+    bottom: 10px;
+    margin-left: 10px; /* 左に空間を追加 */
+    margin-bottom: 10px; /* 下に空間を追加 */
+    color: #fff;
+    text-decoration: none;
+    font-size: 0.9em;
+    background: rgba(120, 144, 156, 0.8); /* 透過度を追加 */
+    padding: 8px 12px;
+    border-radius: 4px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.12);
+    z-index: 100;
+    transition: background 0.2s, box-shadow 0.2s;
+}
+a[href="history.html"]:hover {
+    background: rgba(84, 110, 122, 0.9); /* ホバー時の透過度変更 */
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+}
+
+/* セレクトボックス */
+select {
+    font-size: 0.98em;
+    padding: 6px 8px;
+    border: 0.5px#b0bec5 solid;
+    border-radius: 5px;
+    width: auto;
+    min-width: 48px;
+    box-sizing: border-box;
+}
+select:hover {
+    border-color: #78909c;
+    box-shadow: 0 0 0 2px #cfd8dc;
+    background: #e3e8ee;
+    transition: border-color 0.2s, box-shadow 0.2s, background 0.2s;
+}
+select:focus {
+    border-color: #78909c;
+    outline: none;
+    box-shadow: 0 0 0 2px #cfd8dc;
+    background: #e3e8ee;
+    transition: border-color 0.2s, box-shadow 0.2s, background 0.2s;
+}
+
+/* セレクト行 */
+.select-row {
+    display: flex;
+    gap: 0.5em;
+    align-items: center;
+    margin-bottom: 0.3em; 
+}
+.select-row select {
+    width: auto;
+    min-width: 48px;
+    font-size: 0.98em;
+    padding: 6px 8px;
+    margin-bottom: 0;
+    border: 0.5px #b0bec5 solid;
+}
+
+/* PC画面でフォームを2カラム化 */
+@media (min-width: 900px) {
+    .container {
+        max-width: 700px;
+        padding: 24px 32px 24px 32px;
+    }
+    form, .container > div, .container > label, .container > input, .container > select, .container > button {
+        max-width: 340px;
+        margin-left: auto;
+        margin-right: auto;
+    }
+    .form-grid {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 18px 24px;
+        align-items: end;
+    }
+    .form-grid label,
+    .form-grid input,
+    .form-grid select,
+    .form-grid .select-row {
+        margin-top: 0;
+        margin-bottom: 0;
+    }
+    .form-grid label {
+        margin-bottom: 0.1em;
+        font-size: 1em;
+    }
+    .form-grid .select-row {
+        margin-bottom: 0.2em;
+    }
+    button {
+        max-width: 220px;
+        margin-left: auto;
+        margin-right: auto;
+        margin-top: 1.2em;
+    }
+}
+
+/* モバイル用 */
+@media (max-width: 600px) {
+    html, body {
+        overflow-y: auto;   /* ← ここを修正 */
+        height: auto;       /* ← ここを修正 */
+        max-height: none;   /* ← ここを修正 */
+    }
+    .container {
+        max-width: 96vw;
+        min-height: 100vh;
+        max-height: none;   /* ← ここを修正 */
+        overflow: visible;  /* ← ここを修正 */
+        margin-left: auto;
+        margin-right: auto;
+        padding: 4vw 2vw 10vw 2vw;
+    }
+    body {
+        display: block;
+        background: #f8f9fa;
+    }
+    h2 {
+        font-size: 1.5em;
+    }
+    input[type="text"], select, input[type="time"], input[type="date"] {
+        font-size: 0.95em;
+        padding: 4px 4px;
+    }
+    #lastEntryTable {
+        font-size: 0.8em;
+        background: #fff;
+        width: 100%;
+        max-width: 100%;
+        border-radius: 8px;
+    }
+    #lastEntryTable th {
+        background: #e3e8ee;
+    }
+    #lastEntryTable tr:nth-child(even) td {
+        background: #f0f2f5;
+    }
+    button {
+        font-size: 0.95em;
+        padding: 6px 0;
+    }
+    a[href="history.html"] {
+        font-size: 0.92em;
+        left: 4px;
+        bottom: 4px;
+        padding: 3px 7px;
+    }
+    .select-row {
+        gap: 0.3em;
+    }
+    .select-row select {
+        font-size: 0.95em;
+        padding: 4px 4px;
+        min-width: 36px;
+    }
+}
+
+/* 全員分の打刻テーブルを見やすくするスタイル */
+#todayEntries {
+    width: 90%;
+    margin: 32px auto 0 auto;
+    max-width: none;
+}
+
+#todayEntriesTable {
+    width: 100%;
+    min-width: 500px;
+    max-width: none;
+    display: table;
+}
+
+/* モバイル用や@media内では元のスタイルを優先 */
+@media (max-width: 600px) {
+    #todayEntries {
+        width: 100%;
+        margin: 16px 0 0 0;
+        max-width: 100%;
+    }
+    #todayEntriesTable {
+        width: 100%;
+        min-width: 0;
+        max-width: 100%;
+        font-size: 0.92em;
+    }
+    #todayEntriesTable th, #todayEntriesTable td {
+        padding: 6px 2px;
+        font-size: 0.92em;
+    }
+}
+
+/* todayEntriesTable を格子（グリッド）状にする */
+#todayEntriesTable th,
+#todayEntriesTable td {
+    border: 1px solid #b0bec5;
+    padding: 10px 8px;
+    text-align: center;
+    background: #fff;
+}
+
+#todayEntriesTable th {
+    background: #f5f5f5;
+    font-weight: bold;
+    letter-spacing: 0.05em;
+}
+
+#todayEntriesTable tr:nth-child(even) td {
+    background: #f0f2f5;
+}
+
+#nichizuke {
+    text-align: center;
+    font-size: 1.2em;   /* ← ここを修正 */
+    font-weight: bold;
+}
+
+#loadingOverlay {
+    display: none;
+    position: fixed;
+    top: 0; left: 0;
+    width: 100vw; height: 100vh;
+    background: rgba(0,0,0,0.8);
+    z-index: 9999;
+    justify-content: center;
+    align-items: center;
+}
+#loadingOverlay span {
+    color: white;
+    font-size: 2em;
+    letter-spacing: 0.1em;
+    animation: blink 1s steps(1) infinite;
+}
+
+@keyframes blink {
+    0%   { opacity: 1; }
+    50%  { opacity: 0.5; }
+    100% { opacity: 1; }
+}
+

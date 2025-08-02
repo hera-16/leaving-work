@@ -1,0 +1,199 @@
+body, .container {
+    font-size: 0.95em;
+}
+h2{
+    font-size: 2em;
+    font-weight: bold;
+    margin-top: 1.5em;
+    margin-bottom: 0.5em;
+    color: #333; /* ダークグレー */
+    text-align: center; /* 中央揃え */
+}
+.month-header {
+    font-size: 1.35em;
+    font-weight: bold;
+    margin-top: 1em;
+    margin-bottom: 0.5em;
+    border-bottom: 2px solid #007bff;
+    padding-bottom: 2px;
+    width: fit-content;
+}
+.month-table {
+    margin: 10px 0 14px 0;
+    font-size: 0.95em;
+    border-collapse: collapse;
+    width: 80%;
+    margin-left: auto;
+    margin-right: auto;
+    background: #f5f7fa; /* グレー系統の清潔感ある背景色 */
+    border-radius: 8px;
+    overflow: hidden;
+}
+.month-total {
+    font-weight: bold;
+    margin-bottom: 0.5em;
+    text-decoration: underline;
+    font-size: 1.15em;
+    text-align: right;
+}
+#dataTable th, #dataTable td {
+    padding: 12px 16px; /* セル内の余白を増やしてゆとりを持たせる */
+    text-align: center;
+    border: 1px solid #ccc;
+    white-space: nowrap;
+    font-size: 1em; /* フォントサイズを大きくする */
+    background: transparent;
+}
+#dataTable th {
+    background: #e3e8ee; /* ヘッダーは少し濃いグレー */
+    font-size: 1.1em; /* ヘッダーのフォントサイズをさらに大きく */
+}
+#dataTable tr:nth-child(even) td {
+    background: #f0f2f5; /* 偶数行はさらに淡いグレー */
+}
+#dataTable th:nth-child(1), #dataTable td:nth-child(1) { /* 日付 */
+    width: 1.3em;
+    min-width: 1.3em;
+    max-width: 1.3em;
+}
+#dataTable th:nth-child(2), #dataTable td:nth-child(2),
+#dataTable th:nth-child(3), #dataTable td:nth-child(3),
+.time-col {
+    width: 1.3em;
+    min-width: 1.3em;
+    max-width: 1.3em;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+#dataTable th:nth-child(4), #dataTable td:nth-child(4) { /* 会場 */
+    width: 1.3em;
+    min-width: 1.3em;
+    max-width: 1.3em;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+/* 修正列（5列目）の幅を調整 */
+#dataTable th:nth-child(5),
+#dataTable td:nth-child(5) {
+    width: 0.5em;
+    max-width: 4.5em;
+    text-align: center;
+}
+
+/* テーブルヘッダーの修正列 */
+.edit-header {
+    text-align: center;
+    vertical-align: middle;
+}
+
+/* 修正アイコンのスタイル */
+.edit-icon {
+    width: 16px;
+    height: 16px;
+    margin-left: 5px;
+    vertical-align: middle;
+}
+
+/* スマホサイズは既存のまま */
+@media (max-width: 600px) {
+    body, .container, .month-table { font-size: 0.65em; }
+    h2{
+        font-size: 4em; /* スマホでは少し小さく */
+        text-align: center;
+    }
+    .month-header { font-size: 3em; }
+    .month-total {
+        font-size: 2em;
+        margin-bottom: 0.5em;
+        text-decoration: underline;
+        font-weight: bold;
+        text-align: right;}
+    .month-table {
+        width: 100%;
+        margin-left: 0;
+        margin-right: 0;
+        background: #fff; /* スマホは従来通り白背景 */
+    }
+    #dataTable th, #dataTable td {
+        padding: 6px 8px; /* セル内の余白を増やしてゆとりを持たせる */
+        font-size: 1em;
+        background: transparent;
+    }
+    #dataTable th {
+        background: #e3e8ee;
+    }
+    #dataTable tr:nth-child(even) td {
+        background: #f0f2f5;
+    }
+    #dataTable th:nth-child(1), #dataTable td:nth-child(1) {
+        width: 2.5em;
+        min-width: 2.5em;
+        max-width: 4em;
+    }
+    #dataTable th:nth-child(2), #dataTable td:nth-child(2) {
+        width: 2.2em;
+        min-width: 2.2em;
+        max-width: 2.2em;
+    }
+    #dataTable th:nth-child(3), #dataTable td:nth-child(3),
+    #dataTable th:nth-child(4), #dataTable td:nth-child(4),
+    .time-col {
+        width: 2.2em;
+        min-width: 2.2em;
+        max-width: 2.2em;
+    }
+    #dataTable th:nth-child(5), #dataTable td:nth-child(5) {
+        width: 2.2em;
+        min-width: 2.2em;
+        max-width: 2.2em;
+    }
+}
+
+/* 右下のWebを閉じるボタン */
+#closeWebBtn {
+    position: fixed;
+    right: 12px;
+    bottom: 12px;
+    z-index: 200;
+    color: #fff; /* 文字色を白に変更 */
+    background: rgba(120, 144, 156, 0.8); /* 背景色を指定された色に変更し、透過度80%に */
+    border: none;
+    border-radius: 50%;
+    width: 36px;
+    height: 36px;
+    font-size: 1.1em;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.12);
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: background 0.2s;
+}
+#closeWebBtn:hover {
+    background: rgba(84, 110, 122, 0.8); /* ホバー時に少し濃い色に変更し、透過度80%に */
+}
+
+/* 左下の「打刻画面に戻る」ボタン */
+#backToMainBtn {
+    position: fixed;
+    left: 10px; /* 左の余白を調整 */
+    bottom: 10px; /* 下の余白を調整 */
+    z-index: 100;
+    color: #fff; /* 文字色を白に */
+    background: rgba(120, 144, 156, 0.8); /* 背景色と透過度 */
+    text-decoration: none;
+    font-size: 0.9em; /* フォントサイズを調整 */
+    padding: 8px 12px; /* 内側の余白を調整 */
+    border-radius: 4px; /* 角を丸く */
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.12); /* ボックスシャドウを調整 */
+    transition: background 0.2s, box-shadow 0.2s; /* 背景色と影の変化をスムーズに */
+    font-weight: bold; /* 太さを調整 */
+}
+
+#backToMainBtn:hover {
+    background: rgba(84, 110, 122, 0.9); /* ホバー時の背景色 */
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2); /* ホバー時の影 */
+}
