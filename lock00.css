@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 body {
     font-family: Arial, sans-serif;
     background-color: #27272b;
@@ -69,3 +70,76 @@ body {
     font-size: 14px;
     margin-top: 10px;
 }
+=======
+body {
+    font-family: Arial, sans-serif;
+    background-color: #27272b;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    margin: 0;
+}
+
+.lock-box {
+    text-align: center;
+    background-color: #ffffff;
+    padding: 30px;
+    border-radius: 10px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    width: 90%;
+    max-width: 400px;
+}
+
+.lock-box h2 {
+    font-size: 24px;
+    margin-bottom: 20px;
+    color: #333;
+}
+
+.lock-box form {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 20px; /* ボタンと入力ボックスの間隔を調整 */
+}
+
+.lock-box label {
+    font-size: 16px;
+    margin-bottom: 10px;
+    color: #555;
+}
+
+.lock-box input[type="password"] {
+    padding: 15px; /* 枠のサイズを1.5倍に調整 */
+    border: 1.5px solid #ccc; /* 枠線の太さを調整 */
+    border-radius: 5px;
+    width: 55%;
+    max-width: 300px;
+    font-size: 16px;
+    background-color: #f9f9f9;
+    color: #333;
+}
+
+.lock-box button {
+    margin-top: 20px; /* ボタンの位置をさらに下に調整 */
+    padding: 10px 20px;
+    background-color: #007bff;
+    color: #fff;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 16px;
+    transition: background-color 0.3s ease;
+}
+
+.lock-box button:hover {
+    background-color: #0056b3;
+}
+
+.error-message {
+    color: red;
+    font-size: 14px;
+    margin-top: 10px;
+}
+>>>>>>> b02b82a2a93087fe68cf57b85fd2351527dcad27

@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 <!DOCTYPE html>
 <html lang="ja">
 <head>
@@ -357,4 +358,365 @@
         }
     </script>
 </body>
+=======
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>打刻画面</title>
+    <link rel="stylesheet" href="main.css">
+    <!-- Firebase SDK -->
+    <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
+</head>
+<body>
+    <div class="container">
+        <h2>出退勤入力フォーム</h2>
+        <label for="name">氏名</label>
+        <input type="text" id="name" readonly>
+
+        <label for="department">所属</label>
+        <input type="text" id="department" value="プロパー" readonly>
+
+        <label for="nichizuke">日付</label>
+        <input type="date" id="nichizuke">
+
+        <label for="startTimeHour">出勤時間</label>
+        <div class="select-row">
+            <select id="startTimeHour" class="hour-select"></select> :
+            <select id="startTimeMinute" class="minute-select"></select>
+        </div>
+
+        <label for="endTimeHour">退勤時間</label>
+        <div class="select-row">
+            <select id="endTimeHour" class="hour-select"></select> :
+            <select id="endTimeMinute" class="minute-select"></select>
+        </div>
+
+        <label for="venue">会場</label>
+        <select id="venue">
+            <option value="" selected disabled>選択してください</option>
+            <option value="光琳A">光琳A</option>
+            <option value="光琳B">光琳B</option>
+            <option value="光琳">光琳</option>
+            <option value="ルミネスタ">ルミネスタ</option>
+            <option value="鶴">鶴</option>
+            <option value="櫻">櫻</option>
+            <option value="和宴">和宴</option>
+            <option value="ミュゼ">ミュゼ</option>
+            <option value="出張">出張</option>
+            <option value="レストラン">レストラン</option>
+            <option value="研修">研修</option>
+            <option value="その他">その他</option>
+        </select>
+
+        <button onclick="saveData()">送信</button>
+
+        <div id="lastEntry" style="display: none;">
+            <!-- #lastEntryTable のヘッダーを4列に修正 -->
+            <table id="lastEntryTable">
+                <tr>
+                    <th>日付</th>
+                    <th>出勤時間</th>
+                    <th>退勤時間</th>
+                    <th>会場</th>
+                </tr>
+                <tr>
+                    <td id="lastEntryDate"></td>
+                    <td id="lastEntryStartTime"></td>
+                    <td id="lastEntryEndTime"></td>
+                    <td id="lastEntryVenue"></td>
+                </tr>
+            </table>
+        </div>
+
+        <!-- #todayEntriesTable の上に日付を表示する要素を追加 -->
+        <div id="todayEntries">
+            <table id="todayEntriesTable">
+                <thead>
+                    <tr>
+                        <th>氏名</th>
+                        <th>出勤時間</th>
+                        <th>退勤時間</th>
+                        <th>会場</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <!-- JSで出力 -->
+                </tbody>
+            </table>
+        </div>
+
+        <p id="errorMessage" style="color: red;"></p>
+        <p id="successMessage"></p>
+
+        <a href="history.html" id="historyLink">過去のデータ</a>
+    </div>
+
+    <!-- ローディングオーバーレイ追加 -->
+    <div id="loadingOverlay">
+        <span id="loadingText">loading</span>
+    </div>
+
+    <script>
+        // Firebase構成
+        const firebaseConfig = {
+            apiKey: "AIzaSyBWu2dCPqq8jcxjMuxw4iL3ckE1PfCIF90",
+            authDomain: "leaving-work-31983.firebaseapp.com",
+            databaseURL: "https://leaving-work-31983-default-rtdb.firebaseio.com",
+            projectId: "leaving-work-31983",
+            storageBucket: "leaving-work-31983.appspot.com",
+            messagingSenderId: "262714318259",
+            appId: "1:262714318259:web:6f526f8ee38387ae6affc6",
+            measurementId: "G-YWBGTWQZQQ"
+        };
+        firebase.initializeApp(firebaseConfig);
+        const db = firebase.database();
+
+        document.addEventListener("DOMContentLoaded", function () {
+            const nameInput = document.getElementById("name");
+            const currentUser = localStorage.getItem("currentUser"); // localStorageから氏名を取得
+
+            if (currentUser) {
+                nameInput.value = currentUser; // currentUserを自動入力
+                nameInput.setAttribute("readonly", true); // 編集不可に設定
+            } else {
+                nameInput.value = ""; // 初期値を空欄に設定
+                nameInput.removeAttribute("readonly"); // 編集可能に設定
+            }
+
+            setTimeSelects();
+            loadTodayEntries(); // 今日の出退勤データを読み込む
+
+            // 日付自動入力
+            const nichizukeInput = document.getElementById("nichizuke");
+            const now = new Date();
+            nichizukeInput.value = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}-${String(now.getDate()).padStart(2, '0')}`;
+        });
+
+        // セレクトボックスの初期化
+        function setTimeSelects() {
+            let hourOptions = '';
+            for (let h = 7; h < 24; h++) {
+                let hh = String(h).padStart(2, '0');
+                hourOptions += `<option value="${hh}">${hh}</option>`;
+            }
+            document.getElementById("startTimeHour").innerHTML = hourOptions;
+            document.getElementById("endTimeHour").innerHTML = hourOptions;
+
+            let minuteOptions = '';
+            for (let m = 0; m < 60; m += 15) {
+                let mm = String(m).padStart(2, '0');
+                minuteOptions += `<option value="${mm}">${mm}</option>`;
+            }
+            document.getElementById("startTimeMinute").innerHTML = minuteOptions;
+            document.getElementById("endTimeMinute").innerHTML = minuteOptions;
+
+            const now = new Date();
+            let startHour = now.getHours() - 4;
+            if (startHour < 7) startHour = 7;
+            if (startHour > 23) startHour = 23;
+            let startMin15 = String(Math.floor(now.getMinutes() / 15) * 15).padStart(2, '0');
+            document.getElementById("startTimeHour").value = String(startHour).padStart(2, '0');
+            document.getElementById("startTimeMinute").value = startMin15;
+
+            let endHour = now.getHours();
+            if (endHour < 7) endHour = 7;
+            if (endHour > 23) endHour = 23;
+            let endMin15 = String(Math.floor(now.getMinutes() / 15) * 15).padStart(2, '0');
+            document.getElementById("endTimeHour").value = String(endHour).padStart(2, '0');
+            document.getElementById("endTimeMinute").value = endMin15;
+        }
+
+        // ローディング表示
+        function showLoading() {
+            const overlay = document.getElementById("loadingOverlay");
+            const loadingText = document.getElementById("loadingText");
+            overlay.style.display = "flex";
+            let dotCount = 0;
+            const interval = setInterval(() => {
+                dotCount = (dotCount + 1) % 4;
+                loadingText.textContent = "loading" + ".".repeat(dotCount);
+            }, 500);
+            setTimeout(() => {
+                clearInterval(interval);
+                overlay.style.display = "none";
+                loadingText.textContent = "loading";
+            }, 3000);
+        }
+
+        // データ保存
+        function saveData() {
+            showLoading(); // ローディング表示追加
+
+            let name = document.getElementById("name").value;
+            let department = document.getElementById("department").value;
+            let venue = document.getElementById("venue").value;
+
+            let startHour = document.getElementById("startTimeHour").value;
+            let startMinute = document.getElementById("startTimeMinute").value;
+            let endHour = document.getElementById("endTimeHour").value;
+            let endMinute = document.getElementById("endTimeMinute").value;
+
+            // 日付取得（修正：入力欄から取得）
+            let dateStr = document.getElementById("nichizuke").value; // 例: "2025-07-28"
+            if (!dateStr) {
+                alert("日付を選択してください。");
+                return;
+            }
+
+            let startTimeVal = `${startHour}:${startMinute}`;
+            let endTimeVal = `${endHour}:${endMinute}`;
+
+            if (!startTimeVal || !endTimeVal) {
+                document.getElementById("errorMessage").textContent = "時刻を選択してください。";
+                return;
+            }
+
+            let startTime = `${dateStr}T${startTimeVal}`;
+            let endTime = `${dateStr}T${endTimeVal}`;
+
+            if (
+                !/^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}$/.test(startTime) ||
+                !/^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}$/.test(endTime)
+            ) {
+                alert("年は4桁で入力してください（例: 2025-06-09T12:00）");
+                return;
+            }
+
+            if (!name || !department || !startTime || !endTime || !venue) {
+                alert("すべての項目を入力してください。");
+                return;
+            }
+
+            let startDate = new Date(startTime);
+            let endDate = new Date(endTime);
+            let diffMs = endDate - startDate;
+
+            if (diffMs < 0) {
+                document.getElementById("errorMessage").textContent = "時刻の入力ミスがあります。";
+                return;
+            } else {
+                document.getElementById("errorMessage").textContent = "";
+            }
+
+            let entry = { name, department, startTime, endTime, venue };
+            db.ref("attendanceData").push(entry, function(error) {
+                if (error) {
+                    alert("保存に失敗しました");
+                } else {
+                    // 送信後に入力内容を表示（出勤・退勤・会場のみ）
+                    document.getElementById("lastEntryDate").textContent = startDate.toLocaleDateString(undefined, {
+                        year: 'numeric',
+                        month: 'numeric',
+                        day: 'numeric'
+                    });
+                    document.getElementById("lastEntryStartTime").textContent = startDate.toLocaleTimeString([], {
+                        hour: '2-digit',
+                        minute: '2-digit'
+                    });
+                    document.getElementById("lastEntryEndTime").textContent = endDate.toLocaleTimeString([], {
+                        hour: '2-digit',
+                        minute: '2-digit'
+                    });
+                    document.getElementById("lastEntryVenue").textContent = venue;
+
+                    document.getElementById("lastEntry").style.display = "block";
+                    // 送信後にページ下部へスクロール
+                    window.scrollTo({ top: document.body.scrollHeight, behavior: 'smooth' });
+
+                    // 送信後にその日の全員分の打刻を表示
+                    showTodayEntries();
+                }
+            });
+        }
+
+        // 今日の出退勤データを読み込む
+        function loadTodayEntries() {
+            const now = new Date();
+            const yyyy = now.getFullYear();
+            const mm = String(now.getMonth() + 1).padStart(2, '0');
+            const dd = String(now.getDate()).padStart(2, '0');
+
+            const today = `${yyyy}-${mm}-${dd}`;
+
+            db.ref("attendanceData").orderByChild("startTime").startAt(today + "T00:00").endAt(today + "T23:59").once("value", function(snapshot) {
+                if (snapshot.exists()) {
+                    let entries = [];
+                    snapshot.forEach(function(childSnapshot) {
+                        let entry = childSnapshot.val();
+                        entries.push(entry);
+                    });
+                    displayTodayEntries(entries);
+                } else {
+                    document.getElementById("todayEntries").style.display = "none";
+                }
+            });
+        }
+
+        // 今日の出退勤データを表示
+        function displayTodayEntries(entries) {
+            // 出勤時間の降順でソート
+            entries.sort(function(a, b) {
+                return b.startTime.localeCompare(a.startTime);
+            });
+
+            const tbody = document.getElementById("todayEntriesTable").getElementsByTagName("tbody")[0];
+            tbody.innerHTML = ""; // 既存の行をクリア
+
+            entries.forEach(function(entry) {
+                let row = tbody.insertRow();
+                let cell1 = row.insertCell(0);
+                let cell2 = row.insertCell(1);
+                let cell3 = row.insertCell(2);
+                let cell4 = row.insertCell(3);
+
+                cell1.textContent = entry.name;
+                cell2.textContent = new Date(entry.startTime).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+                cell3.textContent = new Date(entry.endTime).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+                cell4.textContent = entry.venue;
+            });
+
+            document.getElementById("todayEntries").style.display = "block";
+        }
+
+        // 送信後にその日の全員分の打刻を表示
+        function showTodayEntries() {
+            const now = new Date();
+            const yyyy = now.getFullYear();
+            const mm = String(now.getMonth() + 1).padStart(2, '0');
+            const dd = String(now.getDate()).padStart(2, '0');
+            const todayStr = `${yyyy}-${mm}-${dd}`;
+
+            db.ref("attendanceData").once("value", function(snapshot) {
+                const all = snapshot.val();
+                if (!all) return;
+
+                // 今日の日付のデータだけ抽出
+                const todayArr = Object.values(all).filter(e => 
+                    e.startTime && e.startTime.startsWith(todayStr)
+                );
+                // テーブル出力
+                const tbody = document.querySelector("#todayEntriesTable tbody");
+                tbody.innerHTML = "";
+                todayArr.forEach(e => {
+                    const start = new Date(e.startTime);
+                    const end = new Date(e.endTime);
+                    tbody.innerHTML += `
+                        <tr>
+                            <td>${e.name || ""}</td>
+                            <td>${start.toLocaleTimeString([], {hour: '2-digit', minute: '2-digit'})}</td>
+                            <td>${end.toLocaleTimeString([], {hour: '2-digit', minute: '2-digit'})}</td>
+                            <td>${e.venue || ""}</td>
+                        </tr>
+                    `;
+                });
+
+                document.getElementById("todayEntries").style.display = "block";
+            });
+        }
+    </script>
+</body>
+>>>>>>> b02b82a2a93087fe68cf57b85fd2351527dcad27
 </html>

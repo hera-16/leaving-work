@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 <!DOCTYPE html>
 <html lang="ja">
 <head>
@@ -223,4 +224,231 @@
         });
     </script>
 </body>
+=======
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <title>データ修正</title>
+    <link rel="stylesheet" href="edit.css">
+    <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
+</head>
+<body>
+    <div class="container">
+        <h2>データ修正</h2>
+        <div class="edit-flex">
+            <!-- 左：元データ -->
+            <div class="edit-block">
+                <h3>元データ</h3>
+                <table>
+                    <tr><th>日付</th><td id="v_date"></td></tr>
+                    <tr><th>出勤時間</th><td id="v_start"></td></tr>
+                    <tr><th>退勤時間</th><td id="v_end"></td></tr>
+                    <tr><th>会場</th><td id="v_venue"></td></tr>
+                    <tr><th>氏名</th><td id="v_name"></td></tr>
+                    <tr><th>ID</th><td id="v_id"></td></tr>
+                </table>
+            </div>
+            <!-- 右：修正フォーム -->
+            <div class="edit-block">
+                <h3>修正</h3>
+                <form id="editForm">
+                    <table>
+                        <tr><th>日付</th><td><input type="date" id="date"></td></tr>
+                        <tr>
+                            <th>出勤時間</th>
+                            <td>
+                                <select id="startTimeHour"></select> :
+                                <select id="startTimeMinute"></select>
+                            </td>
+                        </tr>
+                        <tr>
+                            <th>退勤時間</th>
+                            <td>
+                                <select id="endTimeHour"></select> :
+                                <select id="endTimeMinute"></select>
+                            </td>
+                        </tr>
+                        <tr>
+                            <th>会場</th>
+                            <td>
+                                <select id="venue">
+                                    <option value="" selected disabled>選択してください</option>
+                                    <option value="光琳A">光琳A</option>
+                                    <option value="光琳B">光琳B</option>
+                                    <option value="光琳">光琳</option>
+                                    <option value="ルミネスタ">ルミネスタ</option>
+                                    <option value="鶴">鶴</option>
+                                    <option value="櫻">櫻</option>
+                                    <option value="和宴">和宴</option>
+                                    <option value="ミュゼ">ミュゼ</option>
+                                    <option value="出張">出張</option>
+                                    <option value="その他">その他</option>
+                                </select>
+                            </td>
+                        </tr>
+                        <tr><th>氏名</th><td><input type="text" id="name" readonly></td></tr>
+                    </table>
+                    <button type="submit">修正内容を保存</button>
+                </form>
+                <button type="button" id="deleteButton">データの削除申請</button>
+            </div>
+        </div>
+        <div id="msg"></div>
+        <div class="back-link">
+            <a href="admin_view.html">戻る</a>
+        </div>
+    </div>
+    <script>
+        // ページ読み込み時にトップへスクロール
+        window.scrollTo({ top: 0, behavior: "auto" });
+
+        // Firebase構成
+        const firebaseConfig = {
+            apiKey: "AIzaSyBWu2dCPqq8jcxjMuxw4iL3ckE1PfCIF90",
+            authDomain: "leaving-work-31983.firebaseapp.com",
+            databaseURL: "https://leaving-work-31983-default-rtdb.firebaseio.com",
+            projectId: "leaving-work-31983",
+            storageBucket: "leaving-work-31983.appspot.com",
+            messagingSenderId: "262714318259",
+            appId: "1:262714318259:web:6f526f8ee38387ae6affc6",
+            measurementId: "G-YWBGTWQZQQ"
+        };
+        firebase.initializeApp(firebaseConfig);
+        const db = firebase.database();
+
+        // セレクトボックスの初期化
+        function setTimeSelects(startHourId, startMinuteId, endHourId, endMinuteId) {
+            let hourOptions = '';
+            for (let h = 7; h < 24; h++) {
+                let hh = String(h).padStart(2, '0');
+                hourOptions += `<option value="${hh}">${hh}</option>`;
+            }
+            document.getElementById(startHourId).innerHTML = hourOptions;
+            document.getElementById(endHourId).innerHTML = hourOptions;
+
+            let minuteOptions = '';
+            for (let m = 0; m < 60; m += 15) {
+                let mm = String(m).padStart(2, '0');
+                minuteOptions += `<option value="${mm}">${mm}</option>`;
+            }
+            document.getElementById(startMinuteId).innerHTML = minuteOptions;
+            document.getElementById(endMinuteId).innerHTML = minuteOptions;
+        }
+
+        setTimeSelects("startTimeHour", "startTimeMinute", "endTimeHour", "endTimeMinute");
+
+        // id取得
+        function getParam(name) {
+            const url = new URL(window.location.href);
+            return url.searchParams.get(name);
+        }
+        const editId = getParam("id");
+
+        // edit-one/{id}からデータ取得
+        db.ref("edit-one/" + editId).once("value", function(snapshot) {
+            const data = snapshot.val();
+            if (data) {
+                const start = new Date(data.startTime);
+                const end = new Date(data.endTime);
+                document.getElementById("v_date").textContent = start.toLocaleDateString('ja-JP');
+                document.getElementById("v_start").textContent = start.toLocaleTimeString('ja-JP', {hour:'2-digit', minute:'2-digit'});
+                document.getElementById("v_end").textContent = end.toLocaleTimeString('ja-JP', {hour:'2-digit', minute:'2-digit'});
+                document.getElementById("v_venue").textContent = data.venue;
+                document.getElementById("v_name").textContent = data.name;
+                document.getElementById("v_id").textContent = data.id || "";
+
+                // 右側（修正フォーム）初期値セット
+                document.getElementById("date").value = start.toISOString().slice(0,10);
+                document.getElementById("startTimeHour").value = String(start.getHours()).padStart(2, '0');
+                document.getElementById("startTimeMinute").value = String(start.getMinutes()).padStart(2, '0');
+                document.getElementById("endTimeHour").value = String(end.getHours()).padStart(2, '0');
+                document.getElementById("endTimeMinute").value = String(end.getMinutes()).padStart(2, '0');
+                document.getElementById("venue").value = data.venue;
+                document.getElementById("name").value = data.name;
+            } else {
+                document.getElementById("msg").textContent = "データが見つかりません";
+            }
+        });
+
+        // 修正内容をedit-two/{id}に保存
+        document.getElementById("editForm").addEventListener("submit", function(e){
+            e.preventDefault();
+            // 入力値取得
+            const date = document.getElementById("date").value;
+            const startHour = document.getElementById("startTimeHour").value;
+            const startMinute = document.getElementById("startTimeMinute").value;
+            const endHour = document.getElementById("endTimeHour").value;
+            const endMinute = document.getElementById("endTimeMinute").value;
+            const venue = document.getElementById("venue").value;
+            const name = document.getElementById("name").value;
+
+            // バリデーション
+            if (!date || !startHour || !startMinute || !endHour || !endMinute || !venue || !name) {
+                document.getElementById("msg").textContent = "すべての項目を入力してください。";
+                return;
+            }
+
+            const startTime = `${date}T${startHour}:${startMinute}`;
+            const endTime = `${date}T${endHour}:${endMinute}`;
+
+            // edit-oneの元データも取得してdepartment等を引き継ぐ
+            db.ref("edit-one/" + editId).once("value", function(snapshot) {
+                const base = snapshot.val();
+                if (!base) {
+                    document.getElementById("msg").textContent = "元データが取得できません。";
+                    return;
+                }
+                const entry = {
+                    ...base,
+                    startTime,
+                    endTime,
+                    venue,
+                    name
+                };
+                db.ref("edit-two/" + editId).set(entry, function(error){
+                    if(error){
+                        document.getElementById("msg").textContent = "保存に失敗しました";
+                    }else{
+                        document.getElementById("msg").textContent = "修正内容を保存しました";
+                        // 画面下部へ自動スクロール
+                        window.scrollTo({ top: document.body.scrollHeight, behavior: "smooth" });
+                    }
+                });
+            });
+        });
+
+        // 削除申請機能
+        document.getElementById("deleteButton").addEventListener("click", function() {
+            if (confirm("本当にこのデータの削除申請を行いますか？")) {
+                // edit-oneの元データを取得してedit-delに保存
+                db.ref("edit-one/" + editId).once("value", function(snapshot) {
+                    const data = snapshot.val();
+                    if (data) {
+                        // 削除申請のタイムスタンプを追加
+                        const deleteRequest = {
+                            ...data,
+                            deleteRequestTime: new Date().toISOString(),
+                            deleteRequestBy: data.name // 削除申請者名
+                        };
+                        
+                        db.ref("edit-del/" + editId).set(deleteRequest, function(error) {
+                            if (error) {
+                                document.getElementById("msg").textContent = "削除申請に失敗しました";
+                            } else {
+                                document.getElementById("msg").textContent = "削除申請を送信しました";
+                                // 画面下部へ自動スクロール
+                                window.scrollTo({ top: document.body.scrollHeight, behavior: "smooth" });
+                            }
+                        });
+                    } else {
+                        document.getElementById("msg").textContent = "削除対象のデータが見つかりません";
+                    }
+                });
+            }
+        });
+    </script>
+</body>
+>>>>>>> b02b82a2a93087fe68cf57b85fd2351527dcad27
 </html>

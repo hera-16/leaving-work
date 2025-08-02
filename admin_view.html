@@ -448,3 +448,245 @@
     </script>
 </body>
 </html>
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>管理者ページ</title>
+    <link rel="stylesheet" href="admin_view.css">
+    <!-- Firebase SDK -->
+    <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
+    <style>
+        /* 編集ボタンのスタイル */
+        .edit-button {
+            border: none;
+            background: none;
+            padding: 0;
+            cursor: pointer;
+        }
+
+        .edit-button img {
+            width: 16px;
+            height: 16px;
+        }
+    </style>
+</head>
+<body>
+    <div class="box">
+        <h2>管理者ページ</h2>
+        <a href="new_register.html" id="newRegister">新規登録画面へ</a>
+        <!-- edit-two 表示エリア -->
+                <td>${data.venue || ""}</td>
+                <td>
+                    <button class="approveBtn" data-id="${id}">
+                        <img src="fish.png" alt="承諾アイコン">
+                        <span>変更</span>
+                    </button>
+                </td>
+            </tr>
+            ${before ? `
+            <tr>
+                <td>修正前</td>
+                <!-- 氏名・日付セルは上の行でrowspan="2"なのでここには入れない -->
+                <td>${before.startTime ? before.startTime.split("T")[1] : ""}</td>
+                <td>${before.endTime ? before.endTime.split("T")[1] : ""}</td>
+                <td>${before.venue || ""}</td>
+                <td>
+                    <button class="rejectBtn" data-id="${id}">
+                        <img src="batu.png" alt="変更しない">
+                        <span>変更しない</span>
+                    </button>
+                </td>
+            </tr>
+            ` : ""}
+        </table>
+    </div>
+                        `;
+                    });
+                    editTwoDiv.innerHTML = html;
+
+                    // 修正申請の承諾ボタンイベント
+                    document.querySelectorAll(".approveBtn").forEach(btn => {
+                        btn.onclick = function() {
+                            const id = btn.getAttribute("data-id");
+                            db.ref("edit-one/" + id).once("value", function(snapshot) {
+                                const original = snapshot.val();
+                                if (!original || !original.id) {
+                                    alert("元データのIDが取得できません。");
+                                    return;
+                                }
+                                db.ref("edit-two/" + id).once("value", function(snap2) {
+                                    const data = snap2.val();
+                                    db.ref("attendanceData/" + original.id).set(data, function(error) {
+                                        if (error) {
+                                            alert("上書きに失敗しました");
+                                        } else {
+                                            // 同じIDのedit-delデータがあるかチェック
+                                            db.ref("edit-del/" + id).once("value", function(editDelSnapshot) {
+                                                const editDelData = editDelSnapshot.val();
+                                                
+                                                // edit-twoを削除
+                                                db.ref("edit-two/" + id).remove();
+                                                
+                                                if (editDelData) {
+                                                    // edit-delが存在する場合はedit-oneを残す
+                                                    console.log("edit-delが存在するため、edit-oneを保持します: " + id);
+                                                    alert("承諾・上書きしました（削除申請が残っています）");
+                                                } else {
+                                                    // edit-delが存在しない場合はedit-oneも削除
+                                                    db.ref("edit-one/" + id).remove();
+                                                    alert("承諾・上書きしました");
+                                                }
+                                                
+                                                displayEditDel();
+                                                displayEditTwo();
+                                                displayGroupedData();
+                                            });
+                                        }
+                                    });
+                                });
+                            });
+                        };
+                    });
+                    
+                    // 修正申請の拒否ボタンイベント
+                    document.querySelectorAll(".rejectBtn").forEach(btn => {
+                        btn.onclick = function() {
+                            const id = btn.getAttribute("data-id");
+                            if (confirm("この申請データを削除しますか？")) {
+                                // 同じIDのedit-delデータがあるかチェック
+                                db.ref("edit-del/" + id).once("value", function(editDelSnapshot) {
+                                    const editDelData = editDelSnapshot.val();
+                                    
+                                    // edit-twoを削除
+                                    db.ref("edit-two/" + id).remove();
+                                    
+                                    if (editDelData) {
+                                        // edit-delが存在する場合はedit-oneを残す
+                                        console.log("edit-delが存在するため、edit-oneを保持します: " + id);
+                                        alert("申請データを削除しました（削除申請が残っています）");
+                                    } else {
+                                        // edit-delが存在しない場合はedit-oneも削除
+                                        db.ref("edit-one/" + id).remove();
+                                        alert("申請データを削除しました");
+                                    }
+                                    
+                                    displayEditDel();
+                                    displayEditTwo();
+                                    displayGroupedData();
+                                });
+                            }
+                        };
+                    });
+                });
+            });
+        }
+
+        // データを日付でグループ化して表示
+        function displayGroupedData() {
+            const groupedDataDiv = document.getElementById("groupedData");
+            groupedDataDiv.innerHTML = ""; // 初期化
+
+            db.ref("attendanceData").once("value", function(snapshot) {
+                const data = snapshot.val();
+                const groupedByDate = {};
+
+                // データを日付でグループ化
+                for (const key in data) {
+                    const entry = data[key];
+                    const date = entry.startTime.split("T")[0]; // `startTime`から日付を抽出
+                    const venue = entry.venue; // 会場
+
+                    if (!groupedByDate[date]) {
+                        groupedByDate[date] = {};
+                    }
+                    if (!groupedByDate[date][venue]) {
+                        groupedByDate[date][venue] = [];
+                    }
+                    groupedByDate[date][venue].push({ ...entry, id: key }); // IDを追加
+                }
+
+                // 日付を降順にソート
+                const sortedDates = Object.keys(groupedByDate).sort((a, b) => new Date(b) - new Date(a));
+
+                // グループ化されたデータを表示
+                sortedDates.forEach(date => {
+                    const dateDiv = document.createElement("div");
+                    dateDiv.innerHTML = `<h3>${date}</h3>`;
+                    groupedDataDiv.appendChild(dateDiv);
+
+                    for (const venue in groupedByDate[date]) {
+                        const venueDiv = document.createElement("div");
+                        venueDiv.innerHTML = `<h4>会場: ${venue}</h4>`;
+                        dateDiv.appendChild(venueDiv);
+
+                        const table = document.createElement("table");
+                        table.border = "1";
+                        table.style.borderCollapse = "collapse";
+                        table.style.width = "100%";
+                        table.innerHTML = `
+                            <tr>
+                                <th>氏名</th>
+                                <th>出勤時間</th>
+                                <th>退勤時間</th>
+                                <th>確認</th>
+                                <th>編集</th> <!-- 5列目を追加 -->
+                            </tr>
+                        `;
+                        groupedByDate[date][venue].forEach(entry => {
+                            const row = table.insertRow(-1);
+                            row.insertCell(0).textContent = entry.name;
+                            row.insertCell(1).textContent = entry.startTime.split("T")[1]; // 時間のみ表示
+                            row.insertCell(2).textContent = entry.endTime.split("T")[1]; // 時間のみ表示
+                            const confirmCell = row.insertCell(3);
+
+                            // 氏名選択ドロップダウンを作成
+                            const nameSelector = document.createElement("select");
+                            nameSelector.innerHTML = `
+                                <option value="" disabled selected>選択してください</option>
+                                <option value="井上">井上</option>
+                                <option value="深水">深水</option>
+                                <option value="都留">都留</option>
+                                <option value="金子">金子</option>
+                                <option value="中村">中村</option>
+                                <option value="林">林</option>
+                            `;
+                            nameSelector.value = entry.selectedBy || ""; // データベースの状態を反映
+                            nameSelector.addEventListener("change", function() {
+                                db.ref(`attendanceData/${entry.id}/selectedBy`).set(nameSelector.value);
+                            });
+                            confirmCell.appendChild(nameSelector);
+
+                            // 編集ボタンを追加
+                            const editCell = row.insertCell(4); // 5列目
+                            const editButton = document.createElement("button");
+                            editButton.className = "edit-button";
+                            const editIcon = document.createElement("img");
+                            editIcon.src = "pen.png";
+                            editIcon.alt = "編集";
+                            editButton.appendChild(editIcon);
+                            editButton.addEventListener("click", function() {
+                                db.ref(`attendanceData/${entry.id}`).once("value", function(snapshot) {
+                                    const data = snapshot.val();
+                                    if (data) {
+                                        db.ref(`edit-one/${entry.id}`).set({
+                                            ...data,
+                                            id: entry.id
+                                        }, function() {
+                                            window.location.href = `edit02.html?id=${entry.id}`;
+                                        });
+                                    }
+                                });
+                            });
+                            editCell.appendChild(editButton);
+                        });
+                        venueDiv.appendChild(table);
+                    }
+                });
+            });
+        }
+    </script>
+</body>
+</html>
