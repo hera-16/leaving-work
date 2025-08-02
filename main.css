@@ -294,6 +294,7 @@ select:focus {
     align-items: center;      /* 縦方向中央揃え */
     justify-content: center;  /* 横方向中央揃え */
     height: 40px;
+    width: 100%;
 }
 
 #loadingOverlay {
