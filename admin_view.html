@@ -393,7 +393,13 @@
                                 <th>編集</th> <!-- 5列目を追加 -->
                             </tr>
                         `;
-                        groupedByDate[date][venue].forEach(entry => {
+                        // 勤務開始時間（startTime）の早い順にソート
+                        const sortedEntries = groupedByDate[date][venue].slice().sort((a, b) => {
+                            const aTime = new Date(a.startTime);
+                            const bTime = new Date(b.startTime);
+                            return aTime - bTime;
+                        });
+                        sortedEntries.forEach(entry => {
                             const row = table.insertRow(-1);
                             row.insertCell(0).textContent = entry.name;
                             row.insertCell(1).textContent = entry.startTime.split("T")[1]; // 時間のみ表示
