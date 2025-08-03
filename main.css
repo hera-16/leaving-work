@@ -385,6 +385,7 @@ select:focus {
     input[type="text"], select, input[type="time"]{
         font-size: 0.95em;
         padding: 4px 4px;
+        height: 30px;
     }
     #lastEntryTable {
         font-size: 0.8em;
